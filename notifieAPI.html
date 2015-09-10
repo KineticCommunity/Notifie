@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Notifie JS API Documentation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="jquery.notifie.css">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.js"></script>
+    <script src="jquery.notifie.js"></script>
+    <style type="text/css">
+        body {min-width: 320px; background-color: whitesmoke;}
+        header.container-fluid {background-color: #0769AD; color: white; border-bottom: 2px solid #2789CD; margin-bottom: 10px;}
+        div.panel-main {border-color: #111;}
+        div.panel-main div.panel-heading {background-color: #333; border-color: #111; color: white; font-weight: bold; font-size: 1.2em;}
+        div.panel-main div.panel-heading a {color: #7ACEF4;}
+        div.panel-sub {border-color: #2789CD;}
+        div.panel-sub div.panel-heading {background-color: #0769AD; border-color: #2789CD; color: white; font-weight: bold; font-size: 1.1em;}
+        div.panel-sub div.panel-body {background-color: #eee;}
+        div.panel-sub div.panel-body div.option-list {background-color: #fff; border: 1px solid #ddd; margin: 10px 5px 0 5px; padding: 5px;}
+        hr {margin: 10px 0;}
+        div.option-list div.default {font-style: italic;}
+        div.option-list small {font-style: italic;}
+        div.example {padding: 10px;}
+        div.example ul.dropdown-menu {min-width: 180px;}
+        div.example ul.dropdown-menu li {padding: 2px 5px; cursor: pointer;}
+        div.option-part .code { margin-top: 10px;}
+        div.option-part .code code {display: block; white-space: pre-wrap;}
+    </style>
+    <script>
+        var EXAMPLES = {
+            'o-message': {
+                'No options': {},
+                'Custom message': {
+                    message: 'This is a custom message.'
+                }
+            },
+            'o-anchor': {
+                'On current element': {
+                    message: 'Notification on the current element.'
+                },
+                'On ancestor element': {
+                    anchor: 'div.panel',
+                    message: 'Notification on ancestor of the current element.'
+                }
+            },
+            'o-type': {
+                'Alert message': {
+                    type: 'alert',
+                    message: 'This is an alert notification.'
+                },
+                'Confirmation notification': {
+                    type: 'confirm',
+                    message: 'This is a confirmation notification. Capiche?'
+                }
+            },
+            'o-severity': {
+                'Error': {
+                    severity: 'danger',
+                    message: 'This is an error notification.'
+                },
+                'Warning': {
+                    severity: 'warning',
+                    message: 'This is a warning notification.'
+                },
+                'Information': {
+                    severity: 'info',
+                    message: 'This is an information notification.'
+                },
+                'Success': {
+                    severity: 'success',
+                    message: 'This is an success notification.'
+                }
+            },
+            'o-margin': {
+                'Inherit margin': {
+                    margin: {inherit: true},
+                    message: 'This notification inherits the margin of its next sibling.'
+                },
+                'Inherit padding': {
+                    margin: {inherit: 'padding'},
+                    message: 'This notification takes the padding of its next sibling and uses those values as its margins.'
+                },
+                'Set all margins': {
+                    margin: {margin: '10px 0px 5px 20px'},
+                    message: 'This notification sets all margins using the css margin property.'
+                },
+                'Set top margin': {
+                    margin: {'margin-top': '10px'},
+                    message: 'This notification sets the top margin using the css margin-top property. By default, the other 3 unspecified margins are inherited.'
+                },
+                'Set top margin only': {
+                    margin: {inherit: false, 'margin-top': '10px'},
+                    message: 'This notification sets the top margin using the css margin-top property. It does not inherit any of the other margins, and therefore has a margin-bottom specified by the default Bootstrap CSS.'
+                }
+            },
+            'o-onshow': {
+                'Add exclamation mark when shown': {
+                    onShow: function(){$(this).find('strong').first().append('!');},
+                    message: 'When the notification was shown, the element that called this notification added an exclamation mark to its first line.'
+                }
+            },
+            'o-onconfirm': {
+                'Add exclamation mark when alert closed': {
+                    onConfirm: function(){$(this).find('strong').first().append('!');},
+                    message: 'When this alert is closed, the element that called this alert will add an exclamation mark to its first line. Please close this alert.'
+                },
+                'Add exclamation mark when confirmed': {
+                    type: 'confirm',
+                    onConfirm: function(){$(this).find('strong').first().append('!');},
+                    message: 'When this confirmation is accepted, the element that called this confirmation will add an exclamation mark to its first line. Please press the accept button.'
+                }
+            },
+            'o-onreject': {
+                'Add exclamation mark when rejected': {
+                    type: 'confirm',
+                    onReject: function(){$(this).find('strong').first().append('!');},
+                    message: 'When this confirmation is closed or rejected, the element that called this confirmation will add an exclamation mark to its first line. Please press the reject button or close the notification.'
+                }
+            },
+            'o-clearexisting': {
+                'Allow only one': {
+                    clearExisting: true,
+                    message: 'This notification will close any other notifications at the same level.'
+                },
+                'Allow multiple': {
+                    clearExisting: false,
+                    message: 'This notification will show up below any other notifications at the same level.'
+                }
+            },
+            'o-exitevents': {
+                'Close on mouse leave': {
+                    exitEvents: 'mouseleave',
+                    message: 'This notification will be closed if you move your mouse away from this option section.'
+                }
+            },
+            'o-textbuttons': {
+                'Show text buttons': {
+                    type: 'confirm',
+                    textButtons: true,
+                    message: 'This confirmation will show buttons with text instead of icons.'
+                }
+            },
+            'o-confirmtext': {
+                'Custom confirm button': {
+                    type: 'confirm',
+                    textButtons: true,
+                    confirmText: 'Duh!',
+                    message: 'This confirmation will show buttons with text with custom text for the confirm button.'
+                }
+            },
+            'o-rejecttext': {
+                'Custom reject button': {
+                    type: 'confirm',
+                    textButtons: true,
+                    rejectText: 'No way!',
+                    message: 'This confirmation will show buttons with text with custom text for the reject button.'
+                }
+            },
+            'o-duration': {
+                'Slow animation': {
+                    duration: 1000,
+                    message: 'This notification\'s animation will take 1 second to open and close.'
+                }
+            },
+            'o-expire': {
+                'Three seconds': {
+                    expire: 3000,
+                    message: 'This notification will automatically close after 3 seconds.'
+                },
+                'Ten seconds': {
+                    expire: 10000,
+                    message: 'This notification will automatically close after 10 seconds.'
+                }
+            },
+            'o-disable': {
+                'Disable button': {
+                    anchor: 'div.option-part',
+                    disable: true,
+                    message: 'The examples button will be disabled while this notification is open.'
+                },
+                'Do not disable button': {
+                    anchor: 'div.option-part',
+                    disable: false,
+                    message: 'The examples button will not be disabled while this notification is open.'
+                }
+            },
+            'o-exit': {
+                'Open notification': {
+                    message: 'Please use the close notification example to close this notification.'
+                },
+                'Close notification': {
+                    exit: true
+                }
+            },
+            'o-recurseexit': {
+                'Open notification': {
+                    message: 'Please open multiple notifications in above example. Then use the close all notifications example to close them all.'
+                },
+                'Close all notifications': {
+                    anchor: 'div.panel-main',
+                    exit: true,
+                    recurseExit: true
+                }
+            }
+        };
+        $( document ).ready(function() {
+          $('div.option-list div.option-part').each(function(i, option){
+              var examples = EXAMPLES[$(option).data('option')] || null;
+              if (examples){
+                  var example = $('<div>').addClass('example').appendTo($(option));
+                  var btnGroup = $('<div>').addClass('btn-group').appendTo(example);
+                  $('<button>').addClass('btn btn-info btn-sm dropdown-toggle')
+                      .attr({type:'button', 'aria-haspopup':'true', 'aria-expanded':'false', 'data-toggle':'dropdown'})
+                      .append('Examples ').append($('<span>').addClass('caret')).appendTo(btnGroup);
+                  var exampleList = $('<ul>').addClass('dropdown-menu').appendTo(btnGroup);
+                  $('<button>').addClass('btn btn-info btn-sm pull-right').attr('type', 'button').append('Close All').on('click', function(e){
+                      $(this).notifie({exit: true, recurseExit: true, anchor: 'div.panel-main'});
+                  }).appendTo(example);
+                  for (var x in examples) {
+                      if (examples.hasOwnProperty(x)) {
+                          $('<li>').append(x).data({'name': x, 'options': examples[x]}).on('click', function(e){
+                              var options = $(this).data('options');
+                              var element = $(this).closest('div.option-part');
+                              var optionName = element.data('option');
+                              var code = element.find('div.code');
+                              if (optionName === 'o-disable'){
+                                  element = element.find('button.dropdown-toggle');
+                              }
+                              var codeVisible = $(this).data('codeVisible');
+                              if (codeVisible !== 'true'){
+                                  $(this).data('codeVisible', 'true');
+                                  $('<code>').append('// ' + $(this).data('name')).appendTo(code);
+                                  $('<code>').append('$("div[data-option=\'' + optionName + '\']")' + (optionName === 'o-disable' ? '.find("button.dropdown-toggle")' : '') + '.notifie({').appendTo(code);
+                                  for (var o in options) {
+                                      if (options.hasOwnProperty(o)) {
+                                          $('<code>').append('    ' + o + ': ' + (typeof options[o] === 'function' ? options[o] : JSON.stringify(options[o])) + ',').appendTo(code);
+                                      }
+                                  }
+                                  var lastOption = code.find('code').last();
+                                  lastOption.text(lastOption.text().slice(0,-1));
+                                  $('<code>').append('})').appendTo(code);
+                                  code.show();
+                              }
+                              element.notifie(options);
+                          }).appendTo(exampleList); 
+                      }
+                  }
+                  $('<div>').addClass('code collapse').appendTo(example);
+              }
+          });
+        });
+    </script>
+</head>
+<body>
+    <header class="container-fluid">
+        <div class="container">
+            <h2><strong>Notifie JS API Documentation</strong></h2>
+        </div>
+    </header>
+    <div class="container">
+        <div class="panel panel-main">
+            <div class="panel-heading clearfix">
+                <span>.notifie( [options] )</span>
+                <span class="pull-right"><i>Returns: <a href="http://api.jquery.com/Types/#jQuery" target="_blank">jQuery</a></i></span>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <strong>Description:</strong>
+                    <span>Displays an inline notification directly above the matched element.</span>
+                </div><br>
+                <div class="panel panel-sub">
+                    <div class="panel-heading">
+                        <span>.notifie( [options] )</span>
+                    </div>
+                    <div class="panel-body">
+                        <div><strong>options</strong></div>
+                        <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Object">Object</a></div>
+                        <div>A JavaScript Object containing options for customizing the functionality of the notification. Options are defined below and are all optional.</div>
+                        <div class="option-list">
+                            
+                            <div class="option-part" data-option="o-message">
+                                <div><strong>message</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#String">String</a></div>
+                                <div>Text to display inside the notification.</div>
+                                <div class="default"><span>Default:</span> "Error"</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-anchor">
+                                <div><strong>anchor</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#String">String</a> <small>(jQuery selector)</small></div>
+                                <div>Finds the closest element matching the anchor selector and creates the notification above that element.</div>
+                                <div class="default"><span>Default:</span> Will display notification above current matched element.</div>
+                            </div>
+                            <hr>
+                            
+                            <div class="option-part" data-option="o-type">
+                                <div><strong>type</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#String">String</a> <small>[alert, confirm]</small></div>
+                                <div>Defines the type of notification to display.</div>
+                                <div class="default"><span>Default:</span> "alert"</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-severity">
+                                <div><strong>severity</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#String">String</a> <small>[danger, warning, info, success]</small></div>
+                                <div>Defines the style of the notification, using Bootstrap styles.</div>
+                                <div class="default"><span>Default:</span> "danger"</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-margin">
+                                <div><strong>margin</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Object">Object</a> <small>{ inherit:[true, false, padding], margin:#px, margin-top:#px,... }</small></div>
+                                <div>Sets the margins of the notification. If inherit is 'true,' margins will be copied from the anchor element. If inherit is 'padding,' margins will be set to the padding of the anchor element. If margin, margin-top, etc are set, they will be set implicitly, overriding any inherited values.</div>
+                                <div class="default"><span>Default:</span> { inherit:true }</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-onshow">
+                                <div><strong>onShow</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Function">Function</a></div>
+                                <div>Function to call when the notification is shown. Context is the current element (not the anchor).</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-onconfirm">
+                                <div><strong>onConfirm</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Function">Function</a></div>
+                                <div>Function to call when alert is closed or confirm button is pressed in confirmation notification. Context is the current element (not the anchor).</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-onreject">
+                                <div><strong>onReject</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Function">Function</a></div>
+                                <div>Function to call when confirmation notification is closed or reject button is pressed in confirmation notification. Context is the current element (not the anchor).</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-clearexisting">
+                                <div><strong>clearExisting</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Close any existing notifications above the anchor before opening a new one.</div>
+                                <div class="default"><span>Default:</span> true</div>
+                            </div><hr>
+                        
+                            <div class="option-part" data-option="o-exitevents">
+                                <div><strong>exitEvents</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#String">String</a> <small>(JavaScript event names)</small></div>
+                                <div>Events that will get added to the current element which will close the notification when they are fired.</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-textbuttons">
+                                <div><strong>textButtons</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Replace icons in the buttons of a confirmation with text.</div>
+                                <div class="default"><span>Default:</span> false</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-confirmtext">
+                                <div><strong>confirmText</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Applies if the <i>textButtons</i> option is true. Sets the text of the confirm button in a confirmation.</div>
+                                <div class="default"><span>Default:</span> 'OK'</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-rejecttext">
+                                <div><strong>rejectText</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Applies if the <i>textButtons</i> option is true. Sets the text of the reject button in a confirmation.</div>
+                                <div class="default"><span>Default:</span> 'Cancel'</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-duration">
+                                <div><strong>duration</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Number">Number</a></div>
+                                <div>Number of milliseconds that the animation of showing/hiding the notification should last.</div>
+                                <div class="default"><span>Default:</span> 100</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-expire">
+                                <div><strong>expire</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Number">Number</a></div>
+                                <div>Applies if the <i>type</i> option is "alert". Sets the number of milliseconds that the alert will stay on screen before automatically disappearing.</div>
+                                <div class="default"><span>Default:</span> Does not expire.</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-disable">
+                                <div><strong>disable</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Disable the current element while the notification is on screen, and enable when the notification is closed.</div>
+                                <div class="default"><span>Default:</span> true</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-exit">
+                                <div><strong>exit</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Close all notifications created by the current element or anchor if <i>anchor</i> option is set.</div>
+                                <div class="default"><span>Default:</span> false</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-recurseexit">
+                                <div><strong>recurseExit</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Applies if the <i>exit</i> option is true. Close all notifications in all children elements of the current element or anchor if <i>anchor</i> option is set.</div>
+                                <div class="default"><span>Default:</span> false</div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+</body>
+</html>
+
+
+

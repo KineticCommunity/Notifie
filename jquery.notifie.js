@@ -1,8 +1,9 @@
 /**
  * Notifie JS
- * Version 0.2
+ * Version 0.2.1
  * 
  * Library that extends jQuery to add a .notifie(options) function for displaying alerts and confirmations.
+ * Requires jQuery, Bootstrap, FontAwesome
  * 
  * Parameters
  * 
@@ -147,7 +148,7 @@ jQuery.fn.extend({
 			var isConfirm = options.type === "confirm";
 			
 			// Build notification container
-			var notification = $("<div>").addClass("notifie clearfix hide alert alert-" + options.severity);
+			var notification = $("<div>").addClass("notifie clearfix alert alert-" + options.severity);
 			
 			// Set margins of notification
 			if (options.margin){
@@ -155,7 +156,6 @@ jQuery.fn.extend({
 				// If margin property exists, set that as the margin
 				if (options.margin.margin){
 					// Set CSS
-					console.log(options.margin.margin);
 					notification.css('margin', options.margin.margin);
 				}
 				// If inherit is true
@@ -167,7 +167,6 @@ jQuery.fn.extend({
 					margin['margin-left'] = options.margin['margin-left'] || owner.css(inheritFrom + 'left');
 					margin['margin-right'] = options.margin['margin-right'] || owner.css(inheritFrom + 'right');
 					
-					console.log(margin);
 					// Set CSS
 					notification.css(margin);
 				}
@@ -179,7 +178,6 @@ jQuery.fn.extend({
 					if (options.margin['margin-left']) margin['margin-left'] = options.margin['margin-left'];
 					if (options.margin['margin-right']) margin['margin-right'] = options.margin['margin-right'];
 					
-					console.log(margin);
 					// Set CSS
 					notification.css(margin);
 				}
@@ -219,7 +217,7 @@ jQuery.fn.extend({
 			// If confirm, build buttons
 			if (isConfirm){
 				// Build button group
-				var buttons = $("<div>").addClass("notifie-buttons border-top alert-" + options.severity).appendTo(notification);
+				var buttons = $("<div>").addClass("notifie-buttons alert-" + options.severity).appendTo(notification);
 				
 				// Create button
 				var rejectBtn = $("<button>").addClass("btn btn-danger btn-sm pull-right reject").appendTo(buttons);
@@ -245,7 +243,7 @@ jQuery.fn.extend({
 			}
 			
 			// Clear any existing notifications if required
-			if (options.clearExisting) owner.prev('div.notifie').trigger('exit', false);
+			if (options.clearExisting) owner.prevUntil(':not(div.notifie)').trigger('exit', false);
 			// Add as sibling immediately before owner
 			owner.before(notification);
 			
@@ -273,8 +271,12 @@ jQuery.fn.extend({
 /**
  * Change Log
  * 
+ * v0.2.1 2015-09-10
+ * 	- Fixed some styling issues and clearExisting issue where not all existing notifications were being cleared.
  * v0.2 2015-09-09
- * 	- Change parent option name to anchor. Fixed bug where sibling elements would clear each other's notifications. 
+ * 	- Change parent option name to anchor. 
+ *  - Fixed bug where sibling elements would clear each other's notifications.
+ *  - Added margin option to set margins around notification. 
  * v0.1 2015-08-24
  * 	- Initial implementation. Includes alert and confirm notifications. 
  *
