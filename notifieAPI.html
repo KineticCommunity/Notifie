@@ -186,6 +186,12 @@
                     message: 'The examples button will not be disabled while this notification is open.'
                 }
             },
+            'o-toggle': {
+                'Toggle alert': {
+                    toggle: true,
+                    message: 'This notification will be hidden if you select the toggle alert example again.'
+                }
+            },
             'o-exit': {
                 'Open notification': {
                     message: 'Please use the close notification example to close this notification.'
@@ -387,6 +393,13 @@
                                 <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
                                 <div>Disable the current element while the notification is on screen, and enable when the notification is closed.</div>
                                 <div class="default"><span>Default:</span> true</div>
+                            </div><hr>
+                            
+                            <div class="option-part" data-option="o-toggle">
+                                <div><strong>toggle</strong></div>
+                                <div><span>Type:</span> <a href="http://api.jquery.com/Types/#Boolean">Boolean</a></div>
+                                <div>Toggle the notification. If it is open, close it. If it is closed, open it.</div>
+                                <div class="default"><span>Default:</span> false</div>
                             </div><hr>
                             
                             <div class="option-part" data-option="o-exit">
